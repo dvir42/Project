@@ -1,4 +1,6 @@
-package graphics;
+package pieces;
+
+import graphics.Board;
 
 public class Place {
 

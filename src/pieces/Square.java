@@ -1,12 +1,12 @@
-package graphics;
+package pieces;
 
 import java.awt.Color;
 
-public class Triangle extends GamePiece {
+public class Square extends GamePiece {
 
-	public static final int STEPS = 2;
+	public static final int STEPS = 3;
 
-	public Triangle(int number, Place place, Color color) {
+	public Square(int number, Place place, Color color) {
 		super(number, place, color);
 	}
 

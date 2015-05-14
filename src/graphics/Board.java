@@ -14,6 +14,13 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import pieces.Circle;
+import pieces.GamePiece;
+import pieces.Place;
+import pieces.Pyramid;
+import pieces.Square;
+import pieces.Triangle;
+
 public class Board extends JPanel implements ActionListener {
 
 	private static final long serialVersionUID = -6436319130451785316L;
