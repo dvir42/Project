@@ -55,7 +55,8 @@ public class Board extends JPanel implements ActionListener {
 	}
 
 	private void putPiece(PieceType type, int i, int j, int number) {
-		graphpieces[i][j].setIcon(new ImageIcon("imgs/" + type + ".png"));
+		graphpieces[i][j].setIcon(new ImageIcon("imgs/" + type + number
+				+ ".png"));
 		switch (type) {
 		case circleb:
 			pieces[i][j] = new Circle(number, new Place(i, j), Color.black);
@@ -77,9 +78,11 @@ public class Board extends JPanel implements ActionListener {
 			break;
 		case pyramidb:
 			pieces[i][j] = new Pyramid(new Place(i, j), Color.black);
+			graphpieces[i][j].setIcon(new ImageIcon("imgs/" + type + ".png"));
 			break;
 		case pyramidw:
 			pieces[i][j] = new Pyramid(new Place(i, j), Color.white);
+			graphpieces[i][j].setIcon(new ImageIcon("imgs/" + type + ".png"));
 			break;
 		}
 	}
