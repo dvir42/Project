@@ -67,8 +67,12 @@ public class Pyramid extends GamePiece {
 				: PieceType.pyramidw;
 	}
 
+	private JFrame frame;
+
 	public void displayPieces() {
-		JFrame frame = new JFrame("Pyramid Pieces");
+		if (frame != null)
+			frame.dispose();
+		frame = new JFrame("Pyramid Pieces");
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		frame.setSize((pyramid.size() == 0 ? 1 : pyramid.size())
 				* (GamePiece.PANEL_SIZE + 10), GamePiece.PANEL_SIZE + 30);
