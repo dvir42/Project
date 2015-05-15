@@ -1,5 +1,7 @@
 package pieces;
 
+import graphics.PieceType;
+
 import java.awt.Color;
 import java.util.ArrayList;
 
@@ -41,6 +43,37 @@ public class Pyramid extends GamePiece {
 			getPlace().move(d, steps);
 		else if ((steps == 2 || steps == 3) && d.orthogonal())
 			getPlace().move(d, steps);
+	}
+
+	@Override
+	public Place[] movements() {
+		return new Place[] { getPlace().movement(Direction.N, 1),
+				getPlace().movement(Direction.E, 1),
+				getPlace().movement(Direction.S, 1),
+				getPlace().movement(Direction.W, 1),
+				getPlace().movement(Direction.NE, 1),
+				getPlace().movement(Direction.NW, 1),
+				getPlace().movement(Direction.SE, 1),
+				getPlace().movement(Direction.SW, 1),
+				getPlace().movement(Direction.N, 2),
+				getPlace().movement(Direction.E, 2),
+				getPlace().movement(Direction.S, 2),
+				getPlace().movement(Direction.W, 2),
+				getPlace().movement(Direction.N, 3),
+				getPlace().movement(Direction.E, 3),
+				getPlace().movement(Direction.S, 3),
+				getPlace().movement(Direction.W, 3), };
+	}
+
+	@Override
+	public PieceType type() {
+		return getColor() == Color.black ? PieceType.pyramidb
+				: PieceType.pyramidw;
+	}
+
+	@Override
+	public void move(int x, int y) {
+		getPlace().move(x, y);
 	}
 
 }

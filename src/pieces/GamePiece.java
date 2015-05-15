@@ -1,5 +1,7 @@
 package pieces;
 
+import graphics.PieceType;
+
 import java.awt.Color;
 
 public abstract class GamePiece {
@@ -39,5 +41,11 @@ public abstract class GamePiece {
 	 * @param d
 	 */
 	public abstract void move(Direction d);
+
+	public abstract void move(int x, int y);
+
+	public abstract Place[] movements();
+
+	public abstract PieceType type();
 
 }

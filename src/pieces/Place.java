@@ -20,6 +20,11 @@ public class Place {
 		return y;
 	}
 
+	public void move(int x, int y) {
+		this.x = x;
+		this.y = y;
+	}
+
 	public void move(Direction d, int steps) {
 		switch (d) {
 		case N:
@@ -67,6 +72,53 @@ public class Place {
 
 	public boolean hasMoved(Place p) {
 		return this.x == p.x && this.y == p.y;
+	}
+
+	public Place movement(Direction d, int steps) {
+		switch (d) {
+		case N:
+			if (y + steps < Board.SIZE_Y)
+				return new Place(x, y + steps);
+			break;
+		case E:
+			if (x + steps < Board.SIZE_X)
+				return new Place(x + steps, y);
+			break;
+		case S:
+			if (y - steps >= 0)
+				return new Place(x, y - steps);
+			break;
+		case W:
+			if (x - steps >= 0)
+				return new Place(x - steps, y);
+			break;
+		case NE:
+			if (y + steps < Board.SIZE_Y && x + steps < Board.SIZE_X) {
+				return new Place(x + steps, y + steps);
+			}
+			break;
+		case NW:
+			if (y + steps < Board.SIZE_Y && x - steps >= 0) {
+				return new Place(x - steps, y + steps);
+			}
+			break;
+		case SE:
+			if (y - steps >= 0 && x + steps < Board.SIZE_X) {
+				return new Place(x + steps, y - steps);
+			}
+			break;
+		case SW:
+			if (y - steps >= 0 && x - steps >= 0) {
+				return new Place(x - steps, y - steps);
+			}
+			break;
+		}
+		return null;
+	}
+
+	@Override
+	public String toString() {
+		return x + "," + y;
 	}
 
 }

@@ -31,6 +31,9 @@ public class Board extends JPanel implements ActionListener {
 	private final JButton[][] graphpieces;
 	private final GamePiece[][] pieces;
 
+	private int toBeMovedI;
+	private int toBeMovedJ;
+
 	public Board() {
 		graphpieces = new JButton[SIZE_Y][SIZE_X];
 		pieces = new GamePiece[SIZE_Y][SIZE_X];
@@ -55,48 +58,115 @@ public class Board extends JPanel implements ActionListener {
 		frame.setVisible(true);
 	}
 
-	private void makeInvisible(JButton b) {
+	private static void makeInvisible(JButton b) {
 		b.setOpaque(false);
 		b.setContentAreaFilled(false);
 		b.setBorderPainted(false);
 	}
 
-	private void putPiece(PieceType type, int i, int j, int number) {
+	public void putPiece(PieceType type, int i, int j, int number) {
 		graphpieces[i][j].setIcon(new ImageIcon("imgs/" + type + number
 				+ ".png"));
 		switch (type) {
 		case circleb:
-			pieces[i][j] = new Circle(number, new Place(i, j), Color.black);
+			pieces[i][j] = new Circle(number, new Place(j, i), Color.black);
 			break;
 		case circlew:
-			pieces[i][j] = new Circle(number, new Place(i, j), Color.white);
+			pieces[i][j] = new Circle(number, new Place(j, i), Color.white);
 			break;
 		case triangleb:
-			pieces[i][j] = new Triangle(number, new Place(i, j), Color.black);
+			pieces[i][j] = new Triangle(number, new Place(j, i), Color.black);
 			break;
 		case trianglew:
-			pieces[i][j] = new Triangle(number, new Place(i, j), Color.white);
+			pieces[i][j] = new Triangle(number, new Place(j, i), Color.white);
 			break;
 		case squareb:
-			pieces[i][j] = new Square(number, new Place(i, j), Color.black);
+			pieces[i][j] = new Square(number, new Place(j, i), Color.black);
 			break;
 		case squarew:
-			pieces[i][j] = new Square(number, new Place(i, j), Color.white);
+			pieces[i][j] = new Square(number, new Place(j, i), Color.white);
 			break;
 		case pyramidb:
-			pieces[i][j] = new Pyramid(new Place(i, j), Color.black);
+			pieces[i][j] = new Pyramid(new Place(j, i), Color.black);
 			graphpieces[i][j].setIcon(new ImageIcon("imgs/" + type + ".png"));
 			break;
 		case pyramidw:
-			pieces[i][j] = new Pyramid(new Place(i, j), Color.white);
+			pieces[i][j] = new Pyramid(new Place(j, i), Color.white);
 			graphpieces[i][j].setIcon(new ImageIcon("imgs/" + type + ".png"));
 			break;
 		}
 	}
 
-	private void removePiece(int i, int j) {
+	public GamePiece removePiece(int i, int j) {
 		graphpieces[i][j].setIcon(null);
+		GamePiece piece = pieces[i][j];
 		pieces[i][j] = null;
+		return piece;
+	}
+
+	public boolean containsPiece(int i, int j) {
+		return pieces[i][j] != null;
+	}
+
+	public boolean blocked(int startI, int startJ, int endI, int endJ) {
+		if (startI < endI) {
+			if (startJ < endJ) {
+				for (int i = startI, j = startJ; i <= endI || j <= endJ; i++, j++)
+					if (containsPiece(i, j))
+						return true;
+				return false;
+			} else {
+				for (int i = startI, j = endJ; i <= endI || j >= startJ; i++, j--)
+					if (containsPiece(i, j))
+						return true;
+				return false;
+			}
+		} else {
+			if (startJ < endJ) {
+				for (int i = endI, j = startJ; i >= endI || j <= endJ; i--, j++)
+					if (containsPiece(i, j))
+						return true;
+				return false;
+			} else {
+				for (int i = endI, j = endJ; i >= endI || j >= startJ; i--, j--)
+					if (containsPiece(i, j))
+						return true;
+				return false;
+			}
+		}
+	}
+
+	public void movements(int i, int j) {
+		for (Place place : pieces[i][j].movements()) {
+			if (place != null && !blocked(i, j, place.getY(), place.getX()))
+				graphpieces[place.getY()][place.getX()].setIcon(new ImageIcon(
+						"imgs/dot.png"));
+		}
+	}
+
+	private void removeDots() {
+		for (JButton[] bs : graphpieces)
+			for (JButton b : bs)
+				if (isDot(b))
+					b.setIcon(null);
+	}
+
+	private boolean isDot(int i, int j) {
+		return graphpieces[i][j].getIcon() != null
+				&& graphpieces[i][j].getIcon().getIconHeight() == 58;
+	}
+
+	private boolean isDot(JButton b) {
+		return b.getIcon() != null && b.getIcon().getIconHeight() == 58;
+	}
+
+	public void move(int startI, int startJ, int endI, int endJ) {
+		if (isDot(endI, endJ) && pieces[startI][startJ] != null) {
+			GamePiece piece = removePiece(startI, startJ);
+			putPiece(piece.type(), endI, endJ, piece.getNumber());
+			piece.move(endJ, endI);
+			removeDots();
+		}
 	}
 
 	private void init() {
@@ -166,7 +236,14 @@ public class Board extends JPanel implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		removePiece(0, 0);
+		int i = Integer.parseInt(e.getActionCommand().split(",")[0]);
+		int j = Integer.parseInt(e.getActionCommand().split(",")[1]);
+		if (pieces[i][j] != null) {
+			movements(i, j);
+			toBeMovedI = i;
+			toBeMovedJ = j;
+		} else if (isDot(i, j)) {
+			move(toBeMovedI, toBeMovedJ, i, j);
+		}
 	}
-
 }
