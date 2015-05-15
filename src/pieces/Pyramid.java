@@ -1,9 +1,16 @@
 package pieces;
 
+import graphics.Board;
 import graphics.PieceType;
 
 import java.awt.Color;
+import java.awt.GridLayout;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class Pyramid extends GamePiece {
 
@@ -58,6 +65,34 @@ public class Pyramid extends GamePiece {
 	public PieceType type() {
 		return getColor() == Color.black ? PieceType.pyramidb
 				: PieceType.pyramidw;
+	}
+
+	public void displayPieces() {
+		JFrame frame = new JFrame("Pyramid Pieces");
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setSize((pyramid.size() == 0 ? 1 : pyramid.size())
+				* (GamePiece.PANEL_SIZE + 10), GamePiece.PANEL_SIZE + 30);
+		JPanel panel = new JPanel();
+		frame.add(panel);
+		panel.setLayout(new GridLayout(1, pyramid.size()));
+		panel.setBackground(Color.lightGray);
+		frame.setResizable(false);
+		for (GamePiece piece : pyramid) {
+			JButton b = new JButton();
+			Board.makeInvisible(b);
+			b.setIcon(new ImageIcon("imgs/" + piece.type() + piece.getNumber()
+					+ ".png"));
+			panel.add(b);
+		}
+		frame.setVisible(true);
+	}
+
+	public ArrayList<GamePiece> getPyramid() {
+		return pyramid;
+	}
+
+	public void setPyramid(ArrayList<GamePiece> pyramid) {
+		this.pyramid = pyramid;
 	}
 
 }

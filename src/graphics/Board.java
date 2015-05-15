@@ -58,7 +58,7 @@ public class Board extends JPanel implements ActionListener {
 		frame.setVisible(true);
 	}
 
-	private static void makeInvisible(JButton b) {
+	public static void makeInvisible(JButton b) {
 		b.setOpaque(false);
 		b.setContentAreaFilled(false);
 		b.setBorderPainted(false);
@@ -197,6 +197,9 @@ public class Board extends JPanel implements ActionListener {
 		if (isDot(endI, endJ) && pieces[startI][startJ] != null) {
 			GamePiece piece = removePiece(startI, startJ);
 			putPiece(piece.type(), endI, endJ, piece.getNumber());
+			if (piece instanceof Pyramid)
+				((Pyramid) pieces[endI][endJ]).setPyramid(((Pyramid) piece)
+						.getPyramid());
 			removeDots();
 		}
 	}
@@ -214,6 +217,11 @@ public class Board extends JPanel implements ActionListener {
 		putPiece(PieceType.triangleb, 1, 5, 64);
 		putPiece(PieceType.squareb, 1, 6, 120);
 		putPiece(PieceType.pyramidb, 1, 7, 0);
+		((Pyramid) pieces[1][7]).add(new Circle(1, null, Color.black));
+		((Pyramid) pieces[1][7]).add(new Triangle(25, null, Color.black));
+		((Pyramid) pieces[1][7]).add(new Triangle(36, null, Color.black));
+		((Pyramid) pieces[1][7]).add(new Square(49, null, Color.black));
+		((Pyramid) pieces[1][7]).add(new Square(64, null, Color.black));
 		putPiece(PieceType.squareb, 0, 6, 225);
 		putPiece(PieceType.squareb, 0, 7, 361);
 		putPiece(PieceType.triangleb, 2, 6, 90);
@@ -238,6 +246,18 @@ public class Board extends JPanel implements ActionListener {
 		putPiece(PieceType.trianglew, SIZE_Y - 1 - 1, SIZE_X - 1 - 4, 42);
 		putPiece(PieceType.trianglew, SIZE_Y - 1 - 1, SIZE_X - 1 - 5, 49);
 		putPiece(PieceType.pyramidw, SIZE_Y - 1 - 1, SIZE_X - 1 - 6, 0);
+		((Pyramid) pieces[SIZE_Y - 1 - 1][SIZE_X - 1 - 6]).add(new Circle(1,
+				null, Color.white));
+		((Pyramid) pieces[SIZE_Y - 1 - 1][SIZE_X - 1 - 6]).add(new Circle(4,
+				null, Color.white));
+		((Pyramid) pieces[SIZE_Y - 1 - 1][SIZE_X - 1 - 6]).add(new Triangle(9,
+				null, Color.white));
+		((Pyramid) pieces[SIZE_Y - 1 - 1][SIZE_X - 1 - 6]).add(new Triangle(16,
+				null, Color.white));
+		((Pyramid) pieces[SIZE_Y - 1 - 1][SIZE_X - 1 - 6]).add(new Square(25,
+				null, Color.white));
+		((Pyramid) pieces[SIZE_Y - 1 - 1][SIZE_X - 1 - 6]).add(new Square(36,
+				null, Color.white));
 		putPiece(PieceType.squarew, SIZE_Y - 1 - 1, SIZE_X - 1 - 7, 153);
 		putPiece(PieceType.squarew, SIZE_Y - 1 - 0, SIZE_X - 1 - 6, 169);
 		putPiece(PieceType.squarew, SIZE_Y - 1 - 0, SIZE_X - 1 - 7, 289);
@@ -266,16 +286,44 @@ public class Board extends JPanel implements ActionListener {
 		new Board();
 	}
 
+	private boolean pressedWhitePyramid = false;
+	private boolean pressedBlackPyramid = false;
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		int i = Integer.parseInt(e.getActionCommand().split(",")[0]);
 		int j = Integer.parseInt(e.getActionCommand().split(",")[1]);
 		if (pieces[i][j] != null) {
+			if (pieces[i][j].type() == PieceType.pyramidw
+					&& pressedWhitePyramid) {
+				((Pyramid) pieces[i][j]).displayPieces();
+				pressedWhitePyramid = false;
+				pressedBlackPyramid = false;
+				return;
+			} else if (pieces[i][j].type() == PieceType.pyramidw) {
+				pressedWhitePyramid = true;
+				pressedBlackPyramid = false;
+			} else if (pieces[i][j].type() == PieceType.pyramidb
+					&& pressedBlackPyramid) {
+				((Pyramid) pieces[i][j]).displayPieces();
+				pressedBlackPyramid = false;
+				pressedWhitePyramid = false;
+				return;
+			} else if (pieces[i][j].type() == PieceType.pyramidb) {
+				pressedWhitePyramid = false;
+				pressedBlackPyramid = true;
+			} else {
+				pressedWhitePyramid = false;
+				pressedBlackPyramid = false;
+			}
+			removeDots();
 			movements(i, j);
 			toBeMovedI = i;
 			toBeMovedJ = j;
 		} else if (isDot(i, j)) {
 			move(toBeMovedI, toBeMovedJ, i, j);
+			pressedWhitePyramid = false;
+			pressedBlackPyramid = false;
 		}
 	}
 }
