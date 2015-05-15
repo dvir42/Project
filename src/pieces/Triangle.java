@@ -13,12 +13,6 @@ public class Triangle extends GamePiece {
 	}
 
 	@Override
-	public void move(Direction d) {
-		if (d.orthogonal())
-			getPlace().move(d, STEPS);
-	}
-
-	@Override
 	public Place[] movements() {
 		return new Place[] { getPlace().movement(Direction.N, STEPS),
 				getPlace().movement(Direction.E, STEPS),
@@ -30,11 +24,6 @@ public class Triangle extends GamePiece {
 	public PieceType type() {
 		return getColor() == Color.black ? PieceType.triangleb
 				: PieceType.trianglew;
-	}
-
-	@Override
-	public void move(int x, int y) {
-		getPlace().move(x, y);
 	}
 
 }

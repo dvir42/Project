@@ -164,7 +164,6 @@ public class Board extends JPanel implements ActionListener {
 		if (isDot(endI, endJ) && pieces[startI][startJ] != null) {
 			GamePiece piece = removePiece(startI, startJ);
 			putPiece(piece.type(), endI, endJ, piece.getNumber());
-			piece.move(endJ, endI);
 			removeDots();
 		}
 	}

@@ -35,15 +35,6 @@ public abstract class GamePiece {
 		this.color = color;
 	}
 
-	/**
-	 * Moves the {@link GamePiece} in the {@link Direction} d.
-	 * 
-	 * @param d
-	 */
-	public abstract void move(Direction d);
-
-	public abstract void move(int x, int y);
-
 	public abstract Place[] movements();
 
 	public abstract PieceType type();

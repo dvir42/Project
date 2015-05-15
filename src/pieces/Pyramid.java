@@ -35,17 +35,6 @@ public class Pyramid extends GamePiece {
 	}
 
 	@Override
-	public void move(Direction d) {
-	}
-
-	public void move(Direction d, int steps) {
-		if (steps == 1)
-			getPlace().move(d, steps);
-		else if ((steps == 2 || steps == 3) && d.orthogonal())
-			getPlace().move(d, steps);
-	}
-
-	@Override
 	public Place[] movements() {
 		return new Place[] { getPlace().movement(Direction.N, 1),
 				getPlace().movement(Direction.E, 1),
@@ -69,11 +58,6 @@ public class Pyramid extends GamePiece {
 	public PieceType type() {
 		return getColor() == Color.black ? PieceType.pyramidb
 				: PieceType.pyramidw;
-	}
-
-	@Override
-	public void move(int x, int y) {
-		getPlace().move(x, y);
 	}
 
 }
