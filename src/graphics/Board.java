@@ -105,33 +105,66 @@ public class Board extends JPanel implements ActionListener {
 	}
 
 	public boolean containsPiece(int i, int j) {
-		return pieces[i][j] != null;
+		return i < SIZE_Y && j < SIZE_X && i >= 0 && j >= 0
+				&& pieces[i][j] != null;
 	}
 
 	public boolean blocked(int startI, int startJ, int endI, int endJ) {
 		if (startI < endI) {
 			if (startJ < endJ) {
-				for (int i = startI, j = startJ; i <= endI || j <= endJ; i++, j++)
+				for (int i = startI + 1, j = startJ + 1; i <= endI || j <= endJ; i++, j++) {
 					if (containsPiece(i, j))
 						return true;
+				}
+				return false;
+			} else if (startJ > endJ) {
+				for (int i = startI + 1, j = startJ - 1; i <= endI || j >= endJ; i++, j--) {
+					if (containsPiece(i, j))
+						return true;
+				}
 				return false;
 			} else {
-				for (int i = startI, j = endJ; i <= endI || j >= startJ; i++, j--)
+				for (int i = startI + 1; i <= endI; i++) {
+					if (containsPiece(i, startJ))
+						return true;
+				}
+				return false;
+			}
+		} else if (startI > endI) {
+			if (startJ < endJ) {
+				for (int i = startI - 1, j = startJ + 1; i >= endI || j <= endJ; i--, j++) {
 					if (containsPiece(i, j))
 						return true;
+				}
+				return false;
+			} else if (startJ > endJ) {
+				for (int i = startI - 1, j = startJ - 1; i >= endI || j >= endJ; i--, j--) {
+					if (containsPiece(i, j))
+						return true;
+				}
+				return false;
+			} else {
+				for (int i = startI - 1; i >= endI; i--) {
+					if (containsPiece(i, startJ))
+						return true;
+				}
 				return false;
 			}
 		} else {
 			if (startJ < endJ) {
-				for (int i = endI, j = startJ; i >= endI || j <= endJ; i--, j++)
-					if (containsPiece(i, j))
+				for (int j = startJ + 1; j <= endJ; j++) {
+					if (containsPiece(startI, j))
 						return true;
+				}
+				return false;
+			} else if (startJ > endJ) {
+				for (int j = startJ - 1; j >= endJ; j--) {
+					if (containsPiece(startI, j))
+						return true;
+				}
 				return false;
 			} else {
-				for (int i = endI, j = endJ; i >= endI || j >= startJ; i--, j--)
-					if (containsPiece(i, j))
-						return true;
-				return false;
+				return true;
 			}
 		}
 	}
