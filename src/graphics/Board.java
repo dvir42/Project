@@ -105,6 +105,10 @@ public class Board extends JPanel implements ActionListener {
 		return piece;
 	}
 
+	public GamePiece removePiece(GamePiece piece) {
+		return removePiece(piece.getPlace().getY(), piece.getPlace().getX());
+	}
+
 	public boolean containsPiece(int i, int j) {
 		return i < SIZE_Y && j < SIZE_X && i >= 0 && j >= 0
 				&& pieces[i][j] != null;
@@ -290,11 +294,16 @@ public class Board extends JPanel implements ActionListener {
 	private boolean pressedWhitePyramid = false;
 	private boolean pressedBlackPyramid = false;
 
+	private final ArrayList<GamePiece> eaten = new ArrayList<>();
+
+	private boolean returnPiece = false;
+	private GamePiece returnedPiece = null;
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		int i = Integer.parseInt(e.getActionCommand().split(",")[0]);
 		int j = Integer.parseInt(e.getActionCommand().split(",")[1]);
-		if (pieces[i][j] != null) {
+		if (pieces[i][j] != null && !returnPiece) {
 			if (pieces[i][j].type() == PieceType.pyramidw
 					&& pressedWhitePyramid) {
 				((Pyramid) pieces[i][j]).displayPieces();
@@ -321,16 +330,45 @@ public class Board extends JPanel implements ActionListener {
 			movements(i, j);
 			toBeMovedI = i;
 			toBeMovedJ = j;
+		} else if (returnPiece && isDot(i, j)) {
+			returnPiece = false;
+			putPiece(returnedPiece.type(), i, j, returnedPiece.getNumber());
+			removeDots();
 		} else if (isDot(i, j)) {
 			move(toBeMovedI, toBeMovedJ, i, j);
 			pressedWhitePyramid = false;
 			pressedBlackPyramid = false;
 			for (GamePiece piece : orthogonalInverted(i, j))
 				if (isSieged(piece.getPlace().getY(), piece.getPlace().getX()))
-					System.out.println("yay");
+					eaten.add(piece);
 			for (GamePiece piece : diagonalInverted(i, j))
 				if (isSieged(piece.getPlace().getY(), piece.getPlace().getX()))
-					System.out.println("yay");
+					eaten.add(piece);
+			for (GamePiece piece : eaten) {
+				removePiece(piece);
+				returnPiece(piece);
+			}
+			for (int in = 0; in < eaten.size(); in++) {
+				eaten.remove(in);
+			}
+		}
+	}
+
+	public void returnPiece(GamePiece piece) {
+		returnPiece = true;
+		returnedPiece = piece;
+		if (piece.getColor() == Color.black) {
+			for (int j = 0; j < graphpieces[0].length; j++) {
+				if (graphpieces[0][j].getIcon() == null)
+					graphpieces[0][j].setIcon(new ImageIcon("imgs/dot.png"));
+			}
+		} else {
+			for (int j = 0; j < graphpieces[SIZE_Y - 1].length; j++) {
+				if (graphpieces[SIZE_Y - 1][j].getIcon() == null) {
+					graphpieces[SIZE_Y - 1][j].setIcon(new ImageIcon(
+							"imgs/dot.png"));
+				}
+			}
 		}
 	}
 
