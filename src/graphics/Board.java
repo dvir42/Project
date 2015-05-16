@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -324,6 +325,53 @@ public class Board extends JPanel implements ActionListener {
 			move(toBeMovedI, toBeMovedJ, i, j);
 			pressedWhitePyramid = false;
 			pressedBlackPyramid = false;
+			for (GamePiece piece : orthogonalInverted(i, j))
+				if (isSieged(piece.getPlace().getY(), piece.getPlace().getX()))
+					System.out.println("yay");
+			for (GamePiece piece : diagonalInverted(i, j))
+				if (isSieged(piece.getPlace().getY(), piece.getPlace().getX()))
+					System.out.println("yay");
 		}
+	}
+
+	public boolean inBoard(int i, int j) {
+		return i < SIZE_Y && j < SIZE_X && i >= 0 && j >= 0;
+	}
+
+	public boolean isInverted(int i1, int j1, int i2, int j2) {
+		return inBoard(i1, j1) && inBoard(i2, j2) && pieces[i1][j1] != null
+				&& pieces[i2][j2] != null
+				&& pieces[i1][j1].getColor() != pieces[i2][j2].getColor();
+	}
+
+	public ArrayList<GamePiece> orthogonalInverted(int i, int j) {
+		ArrayList<GamePiece> pieces = new ArrayList<>();
+		if (isInverted(i, j, i + 1, j))
+			pieces.add(this.pieces[i + 1][j]);
+		if (isInverted(i, j, i - 1, j))
+			pieces.add(this.pieces[i - 1][j]);
+		if (isInverted(i, j, i, j + 1))
+			pieces.add(this.pieces[i][j + 1]);
+		if (isInverted(i, j, i, j - 1))
+			pieces.add(this.pieces[i][j - 1]);
+		return pieces;
+	}
+
+	public ArrayList<GamePiece> diagonalInverted(int i, int j) {
+		ArrayList<GamePiece> pieces = new ArrayList<>();
+		if (isInverted(i, j, i + 1, j + 1))
+			pieces.add(this.pieces[i + 1][j + 1]);
+		if (isInverted(i, j, i - 1, j - 1))
+			pieces.add(this.pieces[i - 1][j - 1]);
+		if (isInverted(i, j, i - 1, j + 1))
+			pieces.add(this.pieces[i - 1][j + 1]);
+		if (isInverted(i, j, i + 1, j - 1))
+			pieces.add(this.pieces[i + 1][j - 1]);
+		return pieces;
+	}
+
+	public boolean isSieged(int i, int j) {
+		return orthogonalInverted(i, j).size() == 4
+				|| diagonalInverted(i, j).size() == 4;
 	}
 }
