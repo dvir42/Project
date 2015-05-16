@@ -357,19 +357,25 @@ public class Board extends JPanel implements ActionListener {
 	public void returnPiece(GamePiece piece) {
 		returnPiece = true;
 		returnedPiece = piece;
+		int count = 0;
 		if (piece.getColor() == Color.black) {
 			for (int j = 0; j < graphpieces[0].length; j++) {
-				if (graphpieces[0][j].getIcon() == null)
+				if (graphpieces[0][j].getIcon() == null) {
+					count++;
 					graphpieces[0][j].setIcon(new ImageIcon("imgs/dot.png"));
+				}
 			}
 		} else {
 			for (int j = 0; j < graphpieces[SIZE_Y - 1].length; j++) {
 				if (graphpieces[SIZE_Y - 1][j].getIcon() == null) {
+					count++;
 					graphpieces[SIZE_Y - 1][j].setIcon(new ImageIcon(
 							"imgs/dot.png"));
 				}
 			}
 		}
+		if (count == 0)
+			returnPiece = false;
 	}
 
 	public boolean inBoard(int i, int j) {
