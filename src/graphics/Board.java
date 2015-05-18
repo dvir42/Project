@@ -344,6 +344,10 @@ public class Board extends JPanel implements ActionListener {
 			for (GamePiece piece : diagonalInverted(i, j))
 				if (isSieged(piece.getPlace().getY(), piece.getPlace().getX()))
 					eaten.add(piece);
+			for (int i1 = 0; i1 < pieces.length; i1++)
+				for (int j1 = 0; j1 < pieces[i1].length; j1++)
+					if (isAmbushed(i1, j1))
+						eaten.add(pieces[i1][j1]);
 			for (GamePiece piece : eaten) {
 				removePiece(piece);
 				returnPiece(piece);
@@ -414,8 +418,52 @@ public class Board extends JPanel implements ActionListener {
 		return pieces;
 	}
 
+	public ArrayList<GamePiece> orthogonalInverted(int i, int j, int n) {
+		ArrayList<GamePiece> pieces = new ArrayList<>();
+		if (isInverted(i, j, i + n, j))
+			pieces.add(this.pieces[i + n][j]);
+		if (isInverted(i, j, i - n, j))
+			pieces.add(this.pieces[i - n][j]);
+		if (isInverted(i, j, i, j + n))
+			pieces.add(this.pieces[i][j + n]);
+		if (isInverted(i, j, i, j - n))
+			pieces.add(this.pieces[i][j - n]);
+		return pieces;
+	}
+
+	public ArrayList<GamePiece> diagonalInverted(int i, int j, int n) {
+		ArrayList<GamePiece> pieces = new ArrayList<>();
+		if (isInverted(i, j, i + n, j + n))
+			pieces.add(this.pieces[i + n][j + n]);
+		if (isInverted(i, j, i - 1, j - n))
+			pieces.add(this.pieces[i - n][j - n]);
+		if (isInverted(i, j, i - 1, j + n))
+			pieces.add(this.pieces[i - n][j + n]);
+		if (isInverted(i, j, i + 1, j - n))
+			pieces.add(this.pieces[i + n][j - n]);
+		return pieces;
+	}
+
 	public boolean isSieged(int i, int j) {
 		return orthogonalInverted(i, j).size() == 4
 				|| diagonalInverted(i, j).size() == 4;
 	}
+
+	public boolean isAmbushed(int i, int j) {
+		for (int n = 1; n < Math.max(SIZE_X, SIZE_Y); n++) {
+			int sum = 0;
+			for (GamePiece piece : orthogonalInverted(i, j, n)) {
+				sum += piece.getNumber();
+				if (sum == pieces[i][j].getNumber())
+					return true;
+			}
+			for (GamePiece piece : diagonalInverted(i, j, n)) {
+				sum += piece.getNumber();
+				if (sum == pieces[i][j].getNumber())
+					return true;
+			}
+		}
+		return false;
+	}
+
 }
